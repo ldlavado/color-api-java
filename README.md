@@ -1,28 +1,21 @@
 # Color API Java
 
-Generador de colores del modulo de lenguajes modernos, pasado a un servicio desplegable.
+Generador de colores del módulo de lenguajes modernos, con la página del tutorial y persistencia en PostgreSQL.
 
-La guia del curso devuelve el color en memoria y pide HTTPS propio en el puerto 8443. Esta version:
-
-- conserva `GET /`, `GET /color` y `POST /saludar`
-- guarda cada color y cada saludo en PostgreSQL
-- escucha el puerto que inyecta la plataforma (`PORT`)
-- no trae keystore ni certificado autofirmado: en Render el TLS lo pone la plataforma
-
-Origen academico: `eshernan/informatica-i-arquitectura-ia`, carpeta API Java. El ZIP del curso no se versiona.
+La guía del curso devuelve el color en memoria. Esta versión conserva `GET /`, `GET /color` y `POST /saludar`, y guarda cada color y cada saludo. Origen académico: `eshernan/informatica-i-arquitectura-ia`, carpeta API Java. El ZIP del curso no se versiona.
 
 ## Endpoints
 
-| Metodo | Ruta | Que hace |
+| Método | Ruta | Qué hace |
 | --- | --- | --- |
-| GET | `/` | Pagina del generador y ultimos saludos |
+| GET | `/` | Página del generador y últimos saludos |
 | GET | `/color` | Color aleatorio en JSON y lo guarda |
 | POST | `/saludar` | `{"nombre":"Ana"}` guarda saludo y color |
-| GET | `/saludos` | Ultimos 20 saludos |
-| GET | `/colores` | Ultimos 20 colores |
+| GET | `/saludos` | Últimos 20 saludos |
+| GET | `/colores` | Últimos 20 colores |
 | GET | `/actuator/health` | Salud del proceso y de la base |
 
-## Local
+## Correrlo en local
 
 Hace falta Docker.
 
@@ -30,16 +23,43 @@ Hace falta Docker.
 docker compose up --build
 ```
 
-Abre http://localhost:8080. La base queda en el volumen `colorapi-data`, asi que un reinicio no borra los saludos.
+Abre http://localhost:8080. Postgres queda en el volumen `colorapi-data`, así que un reinicio no borra los saludos.
 
-## Render
+Para pararlo:
 
-1. Entra a Render y elige **New > Blueprint**.
-2. Conecta este repositorio. Render lee `render.yaml`.
-3. Crea el web service y la base en el plan free, region Ohio.
-4. Cuando el deploy termine, abre la URL del servicio y manda un saludo.
-5. Reinicia el servicio. El saludo tiene que seguir en la pagina: eso demuestra la persistencia.
+```bash
+docker compose down
+```
 
-Si el plan `free` de Postgres no aparece en la cuenta, crea la base a mano en el plan mas chico y pega su **internal database URL** en la variable `DATABASE_URL` del web service. La app convierte `postgres://` a JDBC al arrancar.
+`docker compose down -v` borra también los datos.
 
-El free tier se duerme tras unos minutos sin trafico. El primer request despues de eso tarda.
+## Variables
+
+| Variable | Default | Para qué |
+| --- | --- | --- |
+| `PORT` | `8080` | Puerto HTTP. El proceso no abre TLS. |
+| `DATABASE_URL` | `postgres://colorapi:colorapi@localhost:5432/colorapi` | Conexión. Acepta `postgres://` o `postgresql://` y la convierte a JDBC. |
+
+Ejemplo:
+
+```text
+postgres://usuario:clave@host:5432/colorapi
+```
+
+Si la URL trae `?sslmode=require`, se conserva.
+
+## Llevarlo a otro lado
+
+La imagen es un JAR de Spring Boot sobre Java 21. Sirve en cualquier sitio que construya el `Dockerfile` y le pase una base Postgres.
+
+```bash
+docker build -t color-api-java .
+docker run --rm -p 8080:8080 \
+  -e PORT=8080 \
+  -e DATABASE_URL=postgres://usuario:clave@host:5432/colorapi \
+  color-api-java
+```
+
+La base tiene que existir antes de arrancar. Hibernate crea las tablas (`ddl-auto=update`).
+
+Para comprobar la persistencia: manda un saludo, reinicia el proceso y vuelve a abrir `/`. El saludo tiene que seguir ahí.
