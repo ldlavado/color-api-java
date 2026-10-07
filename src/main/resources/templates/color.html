@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generador de color</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="color-code" th:text="${color}">#000000</div>
+    <button id="copy-button" type="button">Copiar hex</button>
+    <div id="saludo"></div>
+    <div>
+        <input type="text" id="nombre-input" placeholder="Escribe tu nombre" required>
+        <button id="saludar-button" type="button">Saludar</button>
+    </div>
+
+    <section class="historial">
+        <h2>Saludos guardados</h2>
+        <ul id="lista-saludos">
+            <li th:each="item : ${saludos}">
+                <span th:text="${item.saludo}">Hola</span>
+                <code th:text="${item.color}">#000000</code>
+            </li>
+        </ul>
+    </section>
+
+    <script src="/script.js"></script>
+    <script th:inline="javascript">
+        document.body.style.backgroundColor = /*[[${color}]]*/ "#000000";
+    </script>
+</body>
+</html>

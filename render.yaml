@@ -1,0 +1,21 @@
+databases:
+  - name: color-api-db
+    plan: free
+    region: ohio
+    databaseName: colorapi
+    user: colorapi
+
+services:
+  - type: web
+    name: color-api-java
+    runtime: docker
+    plan: free
+    region: ohio
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: color-api-db
+          property: connectionString

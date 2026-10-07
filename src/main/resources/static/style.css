@@ -1,0 +1,73 @@
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: monospace;
+    transition: background-color 0.3s ease;
+    background-color: black;
+    margin: 0;
+}
+
+#color-code {
+    font-size: 72px;
+    margin-bottom: 20px;
+}
+
+#saludo {
+    font-size: 36px;
+    margin: 20px;
+    min-height: 48px;
+}
+
+button, input {
+    font-size: 22px;
+    padding: 10px 20px;
+    margin: 10px;
+    border-radius: 8px;
+    border: none;
+}
+
+button {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+input {
+    background-color: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.historial {
+    margin-top: 32px;
+    width: min(640px, 90vw);
+}
+
+.historial h2 {
+    font-size: 22px;
+    text-align: center;
+}
+
+.historial ul {
+    list-style: none;
+    padding: 0;
+}
+
+.historial li {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
